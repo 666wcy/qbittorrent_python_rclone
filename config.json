@@ -1,7 +1,7 @@
 {
-  "Telegram_bot_api": "1049535040:AAFIpUBuaCXeC19R3f7smkRKBoodZWTMmXQ",
-  "Telegram_user_id": "788080806",
-  "Download_dir": "E:\\动漫收藏\\",
+  "Telegram_bot_api": "",
+  "Telegram_user_id": "",
+  "Download_dir": "/downloads/",
   "QB_host": "127.0.0.1",
   "QB_port":"8080",
   "QB_username":"wei666",
