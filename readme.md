@@ -8,9 +8,9 @@
 
 3.基于1,2 的and 和 or
 
-4.下载完成后修改为 SXXEXX的流媒体识别格式（基于下载时的标签或分类）
+4.下载完成后修改为 SXXEXX的流媒体识别格式（基于下载时的标签或分类）（已实现）
 
-5.下载完成后推送telegram
+5.下载完成后推送telegram（实现）
 
 6.附加telegram控制器控制qbittorrent（大概率从github要轮子）
 

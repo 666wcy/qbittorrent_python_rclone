@@ -1,5 +1,9 @@
-import os
+#!/usr/bin/python
+# -*- coding: UTF-8 -*-
+
 from rename import *
+import os
+os.chdir(os.path.dirname(__file__))
 '''重命名文件为emby格式要求'''
 
 #获取文件夹下的子文件夹名和父文件夹绝对路径

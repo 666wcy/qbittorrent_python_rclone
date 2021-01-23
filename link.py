@@ -2,6 +2,7 @@
 # -*- coding: UTF-8 -*-
 
 import os
+os.chdir(os.path.dirname(__file__))
 
 def mkdir(path):
     # 引入模块

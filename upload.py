@@ -1,5 +1,7 @@
+#!/usr/bin/python
+# -*- coding: UTF-8 -*-
 import sys
-import os
+import os, sys, stat
 import sqlite3
 import json
 from rclone import *
@@ -8,7 +10,7 @@ from mover import *
 from qb import *
 import telebot
 import datetime
-
+os.chdir(os.path.dirname(__file__))
 starttime = datetime.datetime.now()
 
 Torrents_name = sys.argv[1]         #名称
@@ -21,8 +23,8 @@ Torrents_save_dir = sys.argv[6]  #保存路径
 Torrents_num = sys.argv[7]  #文件数
 Torrents_size = sys.argv[8] #种子大小
 Torrents_hash = sys.argv[9] #种子hash值
-
-
+Torrents_category=str(Torrents_category).replace("temp ","")
+Torrents_tag=str(Torrents_tag).replace("temp ","")
 
 with open('config.json', 'r', encoding='utf-8') as f:
     conf = json.loads(f.read())
@@ -82,6 +84,7 @@ def creat_db():
                     Upload_status  TEXT   NOT NULL);''')
         conn.commit()
         conn.close()
+        os.chmod("Info.db", stat.S_IRWXU|stat.S_IRWXG|stat.S_IRWXO)
         #连接数据库，没有会自动创建文件，数据结构还是要上面定义
         '''    conn = sqlite3.connect("Info.db")
         c = conn.cursor()

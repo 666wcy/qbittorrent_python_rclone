@@ -1,5 +1,10 @@
+#!/usr/bin/python
+# -*- coding: UTF-8 -*-
 from subprocess import Popen, PIPE
-import json,os
+import os
+
+import json
+os.chdir(os.path.dirname(__file__))
 with open('config.json', 'r', encoding='utf-8') as f:
     conf = json.loads(f.read())
     f.close()

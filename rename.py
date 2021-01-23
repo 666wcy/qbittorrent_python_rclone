@@ -1,5 +1,6 @@
 import re
-
+import os
+os.chdir(os.path.dirname(__file__))
 '''重命名的正则表达式'''
 
 def edit_s4(title):

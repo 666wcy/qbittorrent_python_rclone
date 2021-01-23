@@ -1,5 +1,9 @@
+#!/usr/bin/python
+# -*- coding: UTF-8 -*-
 import qbittorrentapi
 import json
+import os
+os.chdir(os.path.dirname(__file__))
 with open('config.json', 'r', encoding='utf-8') as f:
     conf = json.loads(f.read())
     f.close()
