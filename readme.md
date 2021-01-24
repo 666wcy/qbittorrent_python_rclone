@@ -12,6 +12,6 @@
 
 5.下载完成后推送telegram（实现）
 
-6.附加telegram控制器控制qbittorrent（大概率从github要轮子）
+ 
 
-7.rss支持（考虑中，别的方案已经很完善）
+[使用教程](https://weinb.top/index.php/archives/160/)
