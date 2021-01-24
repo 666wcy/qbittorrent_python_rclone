@@ -148,7 +148,7 @@ def zhu():
         Upload_status=row[9]
         try:
             Torrents_info=qbt_client.torrents_info(torrent_hashes = Torrents_hash)[0]
-            print(Torrents_info)
+            #print(Torrents_info)
             #print(Torrents_info.name)
             Torrents_share_rate=Torrents_info.ratio
             #print(Torrents_share_rate)
@@ -184,7 +184,7 @@ def zhu():
                         save_log(row)
                         endtime = datetime.datetime.now()
 
-                        sql=f"UPDATE Info SET Upload_status = 'Finished' WHERE Torrents_hash = '{Torrents_hash}' "
+                        sql=f"DELETE FROM Info WHERE Torrents_hash = '{Torrents_hash}' "
                         c.execute(sql)
                         conn.commit()
 
@@ -202,7 +202,7 @@ def zhu():
                         save_log(row)
                         endtime = datetime.datetime.now()
 
-                        sql=f"UPDATE Info SET Upload_status = 'Finished' WHERE Torrents_hash = '{Torrents_hash}' "
+                        sql=f"DELETE FROM Info WHERE Torrents_hash = '{Torrents_hash}' "
                         c.execute(sql)
                         conn.commit()
 
@@ -234,7 +234,7 @@ def zhu():
                         os.system(f"rm -rf '{to_dir}'") #删除硬链接
                         endtime = datetime.datetime.now()
 
-                        sql=f"UPDATE Info SET Upload_status = 'Finished' WHERE Torrents_hash = '{Torrents_hash}' "
+                        sql=f"DELETE FROM Info WHERE Torrents_hash = '{Torrents_hash}' "
                         c.execute(sql)
                         conn.commit()
                         if delete=="true":
@@ -264,7 +264,7 @@ def zhu():
                         save_log(row)
                         endtime = datetime.datetime.now()
 
-                        sql=f"UPDATE Info SET Upload_status = 'Finished' WHERE Torrents_hash = '{Torrents_hash}' "
+                        sql=f"DELETE FROM Info WHERE Torrents_hash = '{Torrents_hash}' "
                         c.execute(sql)
                         conn.commit()
                         if delete=="true":
