@@ -10,8 +10,9 @@ import datetime
 import os, sys, stat
 import importlib
 import io
-
-sys.stdout = io.TextIOWrapper(sys.stdout.buffer,encoding='utf8')
+import codecs
+sys.stdout = codecs.getwriter("utf-8")(sys.stdout.detach())
+#sys.stdout = io.TextIOWrapper(sys.stdout.buffer,encoding='utf8')
 
 os.chdir(os.path.dirname(__file__))
 with open('/upload/config.json', 'r', encoding='utf-8') as f:

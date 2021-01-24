@@ -26,14 +26,14 @@ def start_upload_move(dir,folder):
     print(folder)
     if folder!="":
         print("上传判断，文件夹")
-        command=f"rclone move  \"{dir}\"  \"{Remote}:{Upload}/{folder}\"  --stats=5s --stats-one-line --stats-log-level NOTICE --log-file=\"rclone_upload.log\" "
+        command=f"rclone --config /config/rclone/rclone.conf move  \"{dir}\"  \"{Remote}:{Upload}/{folder}\"  --stats=5s --stats-one-line --stats-log-level NOTICE --log-file=\"rclone_upload.log\" "
         print(command)
         resultsCommond = Popen(command,stdout=PIPE,
                                stderr=PIPE,stdin=PIPE,shell=True)
         data = resultsCommond.stdout.read()
         return f"{Remote}:{Upload}/{folder}"
     else:
-        command=f"rclone move  \"{dir}\"  \"{Remote}:{Upload}\"  --stats=5s --stats-one-line --stats-log-level NOTICE --log-file=\"rclone_upload.log\" "
+        command=f"rclone --config /config/rclone/rclone.conf move  \"{dir}\"  \"{Remote}:{Upload}\"  --stats=5s --stats-one-line --stats-log-level NOTICE --log-file=\"rclone_upload.log\" "
         resultsCommond = Popen(command,stdout=PIPE,
                                stderr=PIPE,stdin=PIPE,shell=True)
         data = resultsCommond.stdout.read()
@@ -53,14 +53,14 @@ def start_upload(dir,folder):
     print(folder)
     if folder!="":
         print("上传判断，文件夹")
-        command=f"rclone copy  \"{dir}\"  \"{Remote}:{Upload}/{folder}\"  --stats=5s --stats-one-line --stats-log-level NOTICE --log-file=\"rclone_upload.log\" "
+        command=f"rclone --config /config/rclone/rclone.conf copy  \"{dir}\"  \"{Remote}:{Upload}/{folder}\"  --stats=5s --stats-one-line --stats-log-level NOTICE --log-file=\"rclone_upload.log\" "
         print(command)
         resultsCommond = Popen(command,stdout=PIPE,
                                stderr=PIPE,stdin=PIPE,shell=True)
         data = resultsCommond.stdout.read()
         return f"{Remote}:{Upload}/{folder}"
     else:
-        command=f"rclone copy  \"{dir}\"  \"{Remote}:{Upload}\"  --stats=5s --stats-one-line --stats-log-level NOTICE --log-file=\"rclone_upload.log\" "
+        command=f"rclone --config /config/rclone/rclone.conf copy  \"{dir}\"  \"{Remote}:{Upload}\"  --stats=5s --stats-one-line --stats-log-level NOTICE --log-file=\"rclone_upload.log\" "
         print(command)
         resultsCommond = Popen(command,stdout=PIPE,
                                stderr=PIPE,stdin=PIPE,shell=True)
