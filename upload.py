@@ -175,16 +175,21 @@ if __name__ == '__main__':
                 print("emby后上传rclone")
                 if int(Torrents_num)==1:
                     print("emby,单文件")
-                    temp_dir=str(os.path.splitext(Torrents_name)[0]).replace(str(Download_dir),"")
+                    #temp_dir=str(os.path.splitext(Torrents_name)[0]).replace(str(Download_dir),"")
+                    temp_dir=str(os.path.splitext(Torrents_content_dir)[0]).replace(str(Download_dir),"")
+                    #temp_dir=str(Torrents_content_dir.replace(str(Download_dir),""))
                     print(temp_dir)
+
                     to_dir=os.path.join(Download_dir,"temp", temp_dir)
                     print(to_dir)
 
-                    fu_folder=str(to_dir).replace(str(temp_dir),"")
+                    fu_folder=str(to_dir).replace(str(os.path.splitext(Torrents_name)[0]),"")
                     print(fu_folder)
                     print(Torrents_content_dir,to_dir)
+
                     creat_link(Torrents_content_dir,to_dir)
-                    rename_file(to_dir,int(Torrents_tag))
+
+                    start_rename(fu_folder,int(Torrents_tag))
 
                     upload_dir=to_dir.replace(str(fu_folder),"")
                     print(fu_folder,upload_dir)
