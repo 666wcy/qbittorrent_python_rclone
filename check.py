@@ -11,6 +11,7 @@ import os, sys, stat
 import importlib
 import io
 import codecs
+import shutil
 sys.stdout = codecs.getwriter("utf-8")(sys.stdout.detach())
 #sys.stdout = io.TextIOWrapper(sys.stdout.buffer,encoding='utf8')
 
@@ -34,6 +35,14 @@ try:
 except qbittorrentapi.LoginFailed as e:
     print(e)
 
+def hum_convert(value):
+    value=float(value)
+    units = ["B", "KB", "MB", "GB", "TB", "PB"]
+    size = 1024.0
+    for i in range(len(units)):
+        if (value / size) < 1:
+            return "%.2f%s" % (value, units[i])
+        value = value / size
 
 
 def send_telegram(upload_dir,upload_time,row):
@@ -64,7 +73,7 @@ def send_telegram(upload_dir,upload_time,row):
               f"根目录：`{Torrents_root_dir}`\n" \
               f"保存路径：`{Torrents_save_dir}`\n" \
               f"文件数：`{Torrents_num}`\n" \
-              f"文件大小：`{Torrents_size}Bytes`\n" \
+              f"文件大小：`{hum_convert(Torrents_size)}`\n" \
               f"HASH:`{Torrents_hash}`\n" \
               f"上传地址:`{upload_dir}`\n" \
               f"上传用时:`{last_time}`\n"
@@ -124,7 +133,7 @@ def save_log(row):
               f"根目录：{Torrents_root_dir}\n" \
               f"保存路径：{Torrents_save_dir}\n" \
               f"文件数：{Torrents_num}\n" \
-              f"文件大小：{Torrents_size}Bytes\n" \
+              f"文件大小：{hum_convert(Torrents_size)}\n" \
               f"HASH:{Torrents_hash}\n\n"
         print(log)
         f.write(log)
@@ -146,6 +155,7 @@ def zhu():
         Torrents_tag=row[2]
         Torrents_category=row[1]
         Upload_status=row[9]
+        Torrents_save_dir=row[5]
         try:
             Torrents_info=qbt_client.torrents_info(torrent_hashes = Torrents_hash)[0]
             #print(Torrents_info)
@@ -166,6 +176,8 @@ def zhu():
             tags=Rule["tags"]
             emby=Rule["emby"]
             delete=Rule["delete"]
+            Remote_list=Rule["Remote"]
+            Upload_list=Rule['Upload']
             #print(Upload_status)
             if Torrents_category==category and int(Torrents_time_active)>= int(time) and float(Torrents_share_rate)>=float(share_rate) and Upload_status=="Waiting":
                 #print("符合要求")
@@ -180,9 +192,12 @@ def zhu():
                         #print(Torrents_content_dir)
 
 
-                        remote_dir=start_upload(Torrents_content_dir,"")  #单文件测试完成
-                        save_log(row)
-                        endtime = datetime.datetime.now()
+                        for remote ,upload_lu in zip(Remote_list,Upload_list):
+                            starttime = datetime.datetime.now()
+                            remote_dir=start_upload(Torrents_content_dir,"",remote,upload_lu)  #单文件测试完成
+                            save_log(row)
+                            endtime = datetime.datetime.now()
+                            send_telegram(remote_dir,str((endtime - starttime).seconds),row)
 
                         sql=f"DELETE FROM Info WHERE Torrents_hash = '{Torrents_hash}' "
                         c.execute(sql)
@@ -190,17 +205,24 @@ def zhu():
 
                         if delete=="true":
                             del_torrent(Torrents_hash)
-                        send_telegram(remote_dir,str((endtime - starttime).seconds),row)
+
                         return
                     else:
                         #print(Torrents_content_dir)
                         #print(Download_dir)
                         temp_dir=str(Torrents_content_dir).replace(str(Download_dir),"")
+
+                        for remote ,upload_lu in zip(Remote_list,Upload_list):
+                            starttime = datetime.datetime.now()
+                            remote_dir=start_upload(Torrents_content_dir,temp_dir,remote,upload_lu)  #单文件测试完成
+                            save_log(row)
+                            endtime = datetime.datetime.now()
+                            send_telegram(remote_dir,str((endtime - starttime).seconds),row)
+
+
                         #print(temp_dir)
                         #print(Torrents_content_dir,temp_dir)
-                        remote_dir=start_upload(Torrents_content_dir,temp_dir)
-                        save_log(row)
-                        endtime = datetime.datetime.now()
+
 
                         sql=f"DELETE FROM Info WHERE Torrents_hash = '{Torrents_hash}' "
                         c.execute(sql)
@@ -208,7 +230,7 @@ def zhu():
 
                         if delete=="true":
                             del_torrent(Torrents_hash)
-                        send_telegram(remote_dir,str((endtime - starttime).seconds),row)
+
                         return
 
                 elif emby=="true":
@@ -224,15 +246,25 @@ def zhu():
                         #print(fu_folder)
                         #print(Torrents_content_dir,to_dir)
                         creat_link(Torrents_content_dir,to_dir)
-                        rename_file(to_dir,int(Torrents_tag))
+
+                        if "season_" in Torrents_category:
+                            start_rename(fu_folder,int(str(Torrents_category).replace("season_","")))
+                        else:
+                            start_rename(fu_folder,int(Torrents_tag))
 
                         upload_dir=to_dir.replace(str(fu_folder),"")
                         #print(fu_folder,upload_dir)
-                        remote_dir=start_upload_move(to_dir,upload_dir)
+                        remote_folder=str(Torrents_save_dir).replace(Download_dir,"")
 
-                        save_log(row)
-                        os.system(f"rm -rf '{to_dir}'") #删除硬链接
-                        endtime = datetime.datetime.now()
+                        for remote ,upload_lu in zip(Remote_list,Upload_list):
+                            starttime = datetime.datetime.now()
+                            remote_dir=start_upload(fu_folder,remote_folder,remote,upload_lu)
+                            endtime = datetime.datetime.now()
+                            save_log(row)
+                            send_telegram(remote_dir,str((endtime - starttime).seconds),row)
+
+                        shutil.rmtree(fu_folder)
+
 
                         sql=f"DELETE FROM Info WHERE Torrents_hash = '{Torrents_hash}' "
                         c.execute(sql)
@@ -240,7 +272,6 @@ def zhu():
                         if delete=="true":
                             del_torrent(Torrents_hash)
 
-                        send_telegram(remote_dir,str((endtime - starttime).seconds),row)
 
                         return
                     else:
@@ -255,14 +286,25 @@ def zhu():
 
                         creat_link(Torrents_content_dir,fu_folder)
 
-                        start_rename(fu_folder,int(Torrents_tag))
+                        if "season_" in Torrents_category:
+                            start_rename(fu_folder,int(str(Torrents_category).replace("season_","")))
+                        else:
+                            start_rename(fu_folder,int(Torrents_tag))
 
                         upload_dir=temp_dir.replace(str(Torrents_name),"")
                         #print(fu_folder,upload_dir)
-                        remote_dir=start_upload_move(fu_folder,upload_dir)
-                        os.system(f"rm -rf '{fu_folder}'") #删除硬链接
-                        save_log(row)
-                        endtime = datetime.datetime.now()
+                        for remote ,upload_lu in zip(Remote_list,Upload_list):
+                            starttime = datetime.datetime.now()
+                            remote_dir=start_upload(fu_folder,upload_dir,remote,upload_lu)
+
+                            save_log(row)
+                            endtime = datetime.datetime.now()
+                            send_telegram(remote_dir,str((endtime - starttime).seconds),row)
+
+
+                        shutil.rmtree(fu_folder)
+
+
 
                         sql=f"DELETE FROM Info WHERE Torrents_hash = '{Torrents_hash}' "
                         c.execute(sql)
@@ -270,7 +312,7 @@ def zhu():
                         if delete=="true":
                             del_torrent(Torrents_hash)
 
-                        send_telegram(remote_dir,str((endtime - starttime).seconds),row)
+
                         return
 
 

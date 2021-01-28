@@ -10,8 +10,9 @@ from mover import *
 from qb import *
 import telebot
 import datetime
+import shutil
 os.chdir(os.path.dirname(__file__))
-starttime = datetime.datetime.now()
+
 
 Torrents_name = sys.argv[1]         #名称
 
@@ -34,7 +35,14 @@ Telegram_user_id=conf["Telegram_user_id"]
 Rule_list=conf["Rule"]
 Download_dir=conf["Download_dir"]
 
-
+def hum_convert(value):
+    value=float(value)
+    units = ["B", "KB", "MB", "GB", "TB", "PB"]
+    size = 1024.0
+    for i in range(len(units)):
+        if (value / size) < 1:
+            return "%.2f%s" % (value, units[i])
+        value = value / size
 
 def send_telegram(upload_dir,upload_time):
     if Telegram_bot_api !="":
@@ -56,7 +64,7 @@ def send_telegram(upload_dir,upload_time):
               f"根目录：`{Torrents_root_dir}`\n" \
               f"保存路径：`{Torrents_save_dir}`\n" \
               f"文件数：`{Torrents_num}`\n" \
-              f"文件大小：`{Torrents_size}Bytes`\n" \
+              f"文件大小：`{hum_convert(Torrents_size)}`\n" \
               f"HASH:`{Torrents_hash}`\n" \
               f"上传地址:`{upload_dir}`\n" \
               f"上传用时:`{last_time}`\n"
@@ -104,7 +112,7 @@ def save_log():
           f"根目录：{Torrents_root_dir}\n"
           f"保存路径：{Torrents_save_dir}\n"
           f"文件数：{Torrents_num}\n"
-          f"文件大小：{Torrents_size}Bytes\n"
+          f"文件大小：{hum_convert(Torrents_size)}\n"
           f"HASH:{Torrents_hash}\n")
 
     print(f"python upload.py \"{Torrents_name}\" \"{Torrents_category}\" \"{Torrents_tag}\" \"{Torrents_content_dir}\" \"{Torrents_root_dir}\" \"{Torrents_save_dir}\" \"{Torrents_num}\" \"{Torrents_size}\" \"{Torrents_hash}\"")
@@ -117,7 +125,7 @@ def save_log():
               f"根目录：{Torrents_root_dir}\n" \
               f"保存路径：{Torrents_save_dir}\n" \
               f"文件数：{Torrents_num}\n" \
-              f"文件大小：{Torrents_size}Bytes\n" \
+              f"文件大小：{hum_convert(Torrents_size)}\n" \
               f"HASH:{Torrents_hash}\n\n"
         print(log)
         f.write(log)
@@ -143,19 +151,26 @@ if __name__ == '__main__':
         tags=Rule["tags"]
         emby=Rule["emby"]
         delete=Rule["delete"]
+        Remote_list=Rule["Remote"]
+        Upload_list=Rule['Upload']
         if Torrents_category==category :
             print(category ,share_rate,time,tags,emby)
             if time=="0" and share_rate=="0" and emby=="false" :
                 print("直接调用rclone")
                 if int(Torrents_num)==1:
                     print(Torrents_content_dir)
-                    remote_dir=start_upload(Torrents_content_dir,"")  #单文件测试完成
-                    save_log()
-                    endtime = datetime.datetime.now()
+
+                    for remote ,upload_lu in zip(Remote_list,Upload_list):
+                        starttime = datetime.datetime.now()
+                        remote_dir=start_upload(Torrents_content_dir,"",remote,upload_lu)  #单文件测试完成
+                        save_log()
+                        endtime = datetime.datetime.now()
+                        send_telegram(remote_dir,str((endtime - starttime).seconds))
+
                     if delete=="true":
                         del_torrent(Torrents_hash)
 
-                    send_telegram(remote_dir,str((endtime - starttime).seconds))
+
                     break
                 else:
                     print(Torrents_content_dir)
@@ -163,13 +178,18 @@ if __name__ == '__main__':
                     temp_dir=str(Torrents_content_dir).replace(str(Download_dir),"")
                     print(temp_dir)
                     print(Torrents_content_dir,temp_dir)
-                    remote_dir=start_upload(Torrents_content_dir,temp_dir)
-                    save_log()
-                    endtime = datetime.datetime.now()
+
+                    for remote ,upload_lu in zip(Remote_list,Upload_list):
+                        starttime = datetime.datetime.now()
+                        remote_dir=start_upload(Torrents_content_dir,temp_dir,remote,upload_lu)  #单文件测试完成
+                        save_log()
+                        endtime = datetime.datetime.now()
+                        send_telegram(remote_dir,str((endtime - starttime).seconds))
+
                     if delete=="true":
                         del_torrent(Torrents_hash)
 
-                    send_telegram(remote_dir,str((endtime - starttime).seconds))
+
                     break
             elif time=="0" and share_rate=="0" and emby=="true":
                 print("emby后上传rclone")
@@ -189,18 +209,29 @@ if __name__ == '__main__':
 
                     creat_link(Torrents_content_dir,to_dir)
 
-                    start_rename(fu_folder,int(Torrents_tag))
+                    if "season_" in Torrents_category:
+                        start_rename(fu_folder,int(str(Torrents_category).replace("season_","")))
+                    else:
+                        start_rename(fu_folder,int(Torrents_tag))
+
 
                     upload_dir=to_dir.replace(str(fu_folder),"")
                     print(fu_folder,upload_dir)
-                    remote_dir=start_upload_move(to_dir,upload_dir)
+                    remote_folder=str(Torrents_save_dir).replace(Download_dir,"")
+                    for remote ,upload_lu in zip(Remote_list,Upload_list):
+                        starttime = datetime.datetime.now()
 
-                    save_log()
-                    endtime = datetime.datetime.now()
+                        remote_dir=start_upload(fu_folder,remote_folder,remote,upload_lu)
+
+                        save_log()
+                        endtime = datetime.datetime.now()
+                        send_telegram(remote_dir,str((endtime - starttime).seconds))
+
+
+                    shutil.rmtree(fu_folder)
                     if delete=="true":
                         del_torrent(Torrents_hash)
 
-                    send_telegram(remote_dir,str((endtime - starttime).seconds))
 
                     break
                 else:
@@ -215,18 +246,27 @@ if __name__ == '__main__':
 
                     creat_link(Torrents_content_dir,fu_folder)
 
-                    start_rename(fu_folder,int(Torrents_tag))
+                    if "season_" in Torrents_category:
+                        start_rename(fu_folder,int(str(Torrents_category).replace("season_","")))
+                    else:
+                        start_rename(fu_folder,int(Torrents_tag))
 
                     upload_dir=temp_dir.replace(str(Torrents_name),"")
                     print(fu_folder,upload_dir)
-                    remote_dir=start_upload_move(fu_folder,upload_dir)
 
-                    save_log()
-                    endtime = datetime.datetime.now()
+                    for remote ,upload_lu in zip(Remote_list,Upload_list):
+                        starttime = datetime.datetime.now()
+                        remote_dir=start_upload(fu_folder,upload_dir,remote,upload_lu)
+
+                        save_log()
+                        endtime = datetime.datetime.now()
+                        send_telegram(remote_dir,str((endtime - starttime).seconds))
+
+                    shutil.rmtree(fu_folder)
                     if delete=="true":
                         del_torrent(Torrents_hash)
-                        os.system(f"rm -rf '{Torrents_save_dir}'")
-                    send_telegram(remote_dir,str((endtime - starttime).seconds))
+
+
                     break
             else:
                 print("写入db用定时任务上传")

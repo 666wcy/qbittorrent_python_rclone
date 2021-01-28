@@ -8,11 +8,10 @@ os.chdir(os.path.dirname(__file__))
 with open('config.json', 'r', encoding='utf-8') as f:
     conf = json.loads(f.read())
     f.close()
-Remote=conf["Remote"]
-Upload=conf["Upload"]
 
 
-def start_upload_move(dir,folder):
+
+def start_upload_move(dir,folder,Remote,Upload):
     print(folder)
     dir=str(dir).replace("\\\\","\\")
     dir = dir.rstrip('\\')
@@ -40,7 +39,7 @@ def start_upload_move(dir,folder):
         return f"{Remote}:{Upload}"
 
 
-def start_upload(dir,folder):
+def start_upload(dir,folder,Remote,Upload):
     print(folder)
     dir=str(dir).replace("\\\\","\\")
     dir = dir.rstrip('\\')
