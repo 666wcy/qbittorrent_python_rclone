@@ -1,11 +1,11 @@
 {
-  "Telegram_bot_api": "1049535040:AAFIpUBuaCXeC19R3f7smkRKBoodZWTMmXQ",
-  "Telegram_user_id": "788080806",
+  "Telegram_bot_api": "",
+  "Telegram_user_id": "",
   "Download_dir": "/downloads/",
   "QB_host": "127.0.0.1",
   "QB_port":"8080",
-  "QB_username":"wei666",
-  "QB_password":"wcy98151",
+  "QB_username":"",
+  "QB_password":"",
 
 
   "Rule": [{"category": "","share_rate": "0","time": "0","tags": "rclone","emby": "false","delete": "false","Remote": ["yun"],"Upload": ["upload"]},
