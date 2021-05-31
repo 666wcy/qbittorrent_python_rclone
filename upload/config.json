@@ -1,17 +1,81 @@
 {
-  "Telegram_bot_api": "",
-  "Telegram_user_id": "",
-  "Download_dir": "/downloads/",
-  "QB_host": "127.0.0.1",
-  "QB_port":"8080",
-  "QB_username":"admin",
-  "QB_password":"adminadmin",
-
-
-  "Rule": [{"category": "", "share_rate": "0", "time": "0", "tags": "rclone", "emby": "false", "delete": "true", "Remote": ["yun"], "Upload": ["upload"]},
-{"category": "season_2", "share_rate": "0", "time": "0", "tags": "", "emby": "true", "delete": "true", "Remote": ["wei"], "Upload": ["newanime"]},
-{"category": "season_1", "share_rate": "0", "time": "0", "tags": "", "emby": "true", "delete": "true", "Remote": ["wei"], "Upload": ["newanime"]},
-{"category": "season_3", "share_rate": "0", "time": "0", "tags": "", "emby": "true", "delete": "true", "Remote": ["wei"], "Upload": ["newanime"]},
-{"category": "season_4", "share_rate": "0", "time": "0", "tags": "", "emby": "true", "delete": "true", "Remote": ["wei"], "Upload": ["newanime"]},
-  ]
+     "Telegram_bot_api": "",
+     "Telegram_user_id": "",
+     "Download_dir": "/downloads/",
+     "QB_host": "127.0.0.1",
+     "QB_port": "8080",
+     "QB_username": "admin",
+     "QB_password": "adminadmin",
+     "Rule": [
+          {
+               "category": "",
+               "share_rate": "0",
+               "time": "0",
+               "tags": "rclone",
+               "emby": "false",
+               "delete": "true",
+               "Remote": [
+                    "yun"
+               ],
+               "Upload": [
+                    "upload"
+               ]
+          },
+          {
+               "category": "season_2",
+               "share_rate": "0",
+               "time": "0",
+               "tags": "",
+               "emby": "true",
+               "delete": "true",
+               "Remote": [
+                    "wei"
+               ],
+               "Upload": [
+                    "newanime"
+               ]
+          },
+          {
+               "category": "season_1",
+               "share_rate": "0",
+               "time": "0",
+               "tags": "",
+               "emby": "true",
+               "delete": "true",
+               "Remote": [
+                    "wei"
+               ],
+               "Upload": [
+                    "newanime"
+               ]
+          },
+          {
+               "category": "season_3",
+               "share_rate": "0",
+               "time": "0",
+               "tags": "",
+               "emby": "true",
+               "delete": "true",
+               "Remote": [
+                    "wei"
+               ],
+               "Upload": [
+                    "newanime"
+               ]
+          },
+          {
+               "category": "season_4",
+               "share_rate": "0",
+               "time": "0",
+               "tags": "",
+               "emby": "true",
+               "delete": "true",
+               "Remote": [
+                    "wei"
+               ],
+               "Upload": [
+                    "newanime"
+               ]
+          }
+     ]
 }
