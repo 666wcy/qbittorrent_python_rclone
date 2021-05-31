@@ -5,16 +5,14 @@ import qbittorrentapi
 import sys
 os.chdir(os.path.dirname(__file__))
 QB_port=os.environ.get('PORT')
-Telegram_bot_api=os.environ.get('Telegram_bot_api')
-Telegram_user_id=os.environ.get('Telegram_user_id')
-Rule=os.environ.get('Rule')
+
+
 Username=os.environ.get('Username')
 Password=os.environ.get('Password')
-Rule=Rule.split("\n")
-print(f"端口为{QB_port}")
-sys.stdout.flush()
 
-rclone=os.environ.get('rclone')
+print(f"端口为{QB_port}")
+
+
 
 def change():
     qbt_client = qbittorrentapi.Client(host=f'localhost:{QB_port}', username='admin', password='adminadmin')
@@ -51,17 +49,12 @@ def mkdir(path):
         # 如果目录存在则不创建，并提示目录已存在
         print (path+' 目录已存在')
         return False
-
-
-print(f"Telegram_bot_api:{Telegram_bot_api}\n"
-      f"Telegram_user_id:{Telegram_user_id}\n"
-      f"QB_port:{QB_port}\n"
-      f"Rule:{Rule}\n"
-      f"rclone:{rclone}\n")
-
-mkdir("/config/rclone")
+try:
+    mkdir("/config/rclone")
+except:
+    None
 with open("/config/rclone/rclone.conf", "w") as f:
-    f.write(rclone)
+    
     f.close()
 
 change()
@@ -70,15 +63,9 @@ with open("/upload/config.json", "r",encoding='utf-8') as jsonFile:
     jsonFile.close()
 
 data["QB_port"] = QB_port
-data["Telegram_bot_api"] = Telegram_bot_api
-data["Telegram_user_id"] = Telegram_user_id
 data["QB_username"]=Username
 data["QB_password"]=Password
 
-new_rule=[]
-for a in  Rule:
-    new_rule.append(json.loads(a))
-data["Rule"] = new_rule
 
 
 with open("/upload/config.json", "w") as jsonFile:
