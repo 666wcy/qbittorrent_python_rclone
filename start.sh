@@ -13,7 +13,7 @@ chown 0777 -R /config \
 
 git clone https://github.com/666wcy/qbittorrent_python_rclone
 mkdir /upload/
-mv /qbittorrent_heroku/upload/* /upload/
+mv  -n /qbittorrent_heroku/upload/* /upload/
 chmod 0777 /upload/ -R
 rm -rf /qbittorrent_heroku
 
