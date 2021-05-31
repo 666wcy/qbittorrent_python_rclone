@@ -58,7 +58,7 @@ with open("/config/rclone/rclone.conf", "w") as f:
     f.close()
 
 change()
-with open("/upload/config.json", "r",encoding='utf-8') as jsonFile:
+with open("/upload/config.json", "r",encoding='utf-8-sig', errors='ignore') as jsonFile:
     data = json.load(jsonFile)
     jsonFile.close()
 
