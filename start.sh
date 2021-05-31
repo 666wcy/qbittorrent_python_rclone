@@ -1,6 +1,5 @@
 #!/bin/bash
-ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
-echo 'Asia/Shanghai' >/etc/timezone
+
 
 # 检查config配置文件，并创建
 if [ ! -e "/config/qBittorrent/config/qBittorrent.conf" ] ;  then 
