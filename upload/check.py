@@ -19,15 +19,16 @@ os.chdir(os.path.dirname(__file__))
 with open('/upload/config.json', 'r', encoding='utf-8') as f:
     conf = json.loads(f.read())
     f.close()
+QB_port=os.environ.get('PORT')
 QB_host=conf["QB_host"]
-QB_port=conf["QB_port"]
 QB_username=conf["QB_username"]
 QB_password=conf["QB_password"]
 Telegram_bot_api=conf["Telegram_bot_api"]
 Telegram_user_id=conf["Telegram_user_id"]
 Rule_list=conf["Rule"]
 Download_dir=conf["Download_dir"]
-
+print(f"check端口为{QB_port}")
+sys.stdout.flush()
 
 qbt_client = qbittorrentapi.Client(host=QB_host, port=QB_port, username=QB_username, password=QB_password)
 try:

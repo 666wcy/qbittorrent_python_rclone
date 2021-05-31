@@ -2,6 +2,7 @@
 # -*- coding: UTF-8 -*-
 from subprocess import Popen, PIPE
 import os
+import sys
 
 import json
 os.chdir(os.path.dirname(__file__))
@@ -25,17 +26,21 @@ def start_upload_move(dir,folder,Remote,Upload):
     print(folder)
     if folder!="":
         print("上传判断，文件夹")
-        command=f"rclone --config /config/rclone/rclone.conf move  \"{dir}\"  \"{Remote}:{Upload}/{folder}\"  --stats=5s --stats-one-line --stats-log-level NOTICE --log-file=\"rclone_upload.log\" "
+        command=f"rclone --config /config/rclone/rclone.conf move  \"{dir}\"  \"{Remote}:{Upload}/{folder}\"  -v --stats=1s --stats-one-line   "
         print(command)
         resultsCommond = Popen(command,stdout=PIPE,
                                stderr=PIPE,stdin=PIPE,shell=True)
         data = resultsCommond.stdout.read()
+        print(f"运行结果:{data}")
+        sys.stdout.flush()
         return f"{Remote}:{Upload}/{folder}"
     else:
-        command=f"rclone --config /config/rclone/rclone.conf move  \"{dir}\"  \"{Remote}:{Upload}\"  --stats=5s --stats-one-line --stats-log-level NOTICE --log-file=\"rclone_upload.log\" "
+        command=f"rclone --config /config/rclone/rclone.conf move  \"{dir}\"  \"{Remote}:{Upload}\"  -v --stats=1s --stats-one-line "
         resultsCommond = Popen(command,stdout=PIPE,
                                stderr=PIPE,stdin=PIPE,shell=True)
         data = resultsCommond.stdout.read()
+        print(f"运行结果:{data}")
+        sys.stdout.flush()
         return f"{Remote}:{Upload}"
 
 
@@ -52,18 +57,19 @@ def start_upload(dir,folder,Remote,Upload):
     print(folder)
     if folder!="":
         print("上传判断，文件夹")
-        command=f"rclone --config /config/rclone/rclone.conf copy  \"{dir}\"  \"{Remote}:{Upload}/{folder}\"  --stats=5s --stats-one-line --stats-log-level NOTICE --log-file=\"rclone_upload.log\" "
+        os.system(f"ls \"{dir}\"")
+        command=f"rclone --config /config/rclone/rclone.conf copy  \"{dir}/\"  \"{Remote}:{Upload}/{folder}\"  -v --stats=1s --stats-one-line "
         print(command)
-        resultsCommond = Popen(command,stdout=PIPE,
-                               stderr=PIPE,stdin=PIPE,shell=True)
-        data = resultsCommond.stdout.read()
+        sys.stdout.flush()
+        os.system(command)
+
         return f"{Remote}:{Upload}/{folder}"
     else:
-        command=f"rclone --config /config/rclone/rclone.conf copy  \"{dir}\"  \"{Remote}:{Upload}\"  --stats=5s --stats-one-line --stats-log-level NOTICE --log-file=\"rclone_upload.log\" "
+        os.system(f"ls \"{dir}\"")
+        command=f"rclone --config /config/rclone/rclone.conf copy  \"{dir}\"  \"{Remote}:{Upload}\"  -v --stats=1s --stats-one-line "
         print(command)
-        resultsCommond = Popen(command,stdout=PIPE,
-                               stderr=PIPE,stdin=PIPE,shell=True)
-        data = resultsCommond.stdout.read()
+        os.system(command)
+        
         return f"{Remote}:{Upload}"
 
 

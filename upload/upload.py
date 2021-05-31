@@ -4,6 +4,7 @@ import sys
 import os, sys, stat
 import sqlite3
 import json
+import time
 from rclone import *
 from link import *
 from mover import *
@@ -11,9 +12,10 @@ from qb import *
 import telebot
 import datetime
 import shutil
+from pathlib import Path
 os.chdir(os.path.dirname(__file__))
-
-
+print("开始上传")
+sys.stdout.flush()
 Torrents_name = sys.argv[1]         #名称
 
 Torrents_category = sys.argv[2]     #类别
@@ -147,7 +149,7 @@ if __name__ == '__main__':
     for  Rule in Rule_list:
         category= Rule["category"]
         share_rate=Rule["share_rate"]
-        time=Rule["time"]
+        uptime=Rule["time"]
         tags=Rule["tags"]
         emby=Rule["emby"]
         delete=Rule["delete"]
@@ -155,7 +157,8 @@ if __name__ == '__main__':
         Upload_list=Rule['Upload']
         if Torrents_category==category :
             print(category ,share_rate,time,tags,emby)
-            if time=="0" and share_rate=="0" and emby=="false" :
+            sys.stdout.flush()
+            if uptime=="0" and share_rate=="0" and emby=="false" :
                 print("直接调用rclone")
                 if int(Torrents_num)==1:
                     print(Torrents_content_dir)
@@ -191,7 +194,7 @@ if __name__ == '__main__':
 
 
                     break
-            elif time=="0" and share_rate=="0" and emby=="true":
+            elif uptime=="0" and share_rate=="0" and emby=="true":
                 print("emby后上传rclone")
                 if int(Torrents_num)==1:
                     print("emby,单文件")
@@ -206,6 +209,14 @@ if __name__ == '__main__':
                     fu_folder=str(to_dir).replace(str(os.path.splitext(Torrents_name)[0]),"")
                     print(fu_folder)
                     print(Torrents_content_dir,to_dir)
+                    my_file = Path(fu_folder)
+                    while  my_file.is_dir():
+                        time.sleep(10)
+                        print("等待上传")
+                        sys.stdout.flush()
+                        #防止错误删除
+                    print("文件夹不存在，不需要等待上传")
+                    sys.stdout.flush()
 
                     creat_link(Torrents_content_dir,to_dir)
 
