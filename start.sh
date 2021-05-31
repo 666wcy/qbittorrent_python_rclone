@@ -12,7 +12,7 @@ chown 0777 -R /config \
     /downloads
 
 git clone https://github.com/666wcy/qbittorrent_python_rclone
-
+chmod 0777 /upload
 mv  -n /qbittorrent_python_rclone/upload/* /upload/
 chmod 0777 /upload/ -R
 rm -rf /qbittorrent_python_rclone
