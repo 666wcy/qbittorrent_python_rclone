@@ -12,10 +12,10 @@ chown 0777 -R /config \
     /downloads
 
 git clone https://github.com/666wcy/qbittorrent_python_rclone
-mkdir /upload/
-mv  -n /qbittorrent_heroku/upload/* /upload/
+
+mv  -n /qbittorrent_python_rclone/upload/* /upload/
 chmod 0777 /upload/ -R
-rm -rf /qbittorrent_heroku
+rm -rf /qbittorrent_python_rclone
 
 
 nohup yes "" | qbittorrent-nox --webui-port=$PORT  --profile=/config  &
