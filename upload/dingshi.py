@@ -20,7 +20,7 @@ def new_clock():
 
 if __name__ == '__main__':
     scheduler = BlockingScheduler()
-    scheduler.add_job(wakeup, "interval", seconds=60)
+    
     scheduler.add_job(new_clock, "interval", seconds=60)
     print("开启监控")
     sys.stdout.flush()
