@@ -1,14 +1,11 @@
 # This is a basic workflow to help you get started with Actions
 
-name: built
+name: Publish Docker image
 
 # Controls when the action will run. Triggers the workflow on push or pull request
 # events but only for the master branch
 on:
-  push:
-
-    tags:
-      - 'v*'
+  workflow_dispatch:
 
 
     #branches: [ master ]
@@ -29,8 +26,7 @@ jobs:
         env:
           DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
           DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
-        run: |
-          echo "${DOCKER_PASSWORD}" | docker login --username ${DOCKER_USERNAME} --password-stdin
+
       - name: Set up Docker Buildx
         id: buildx
         uses: crazy-max/ghaction-docker-buildx@v1
@@ -44,4 +40,4 @@ jobs:
           --platform=linux/amd64 \
           --output "type=image,push=true" \
           --file ./Dockerfile . \
-          --tag benchao/qbittorrent-rclone:${{ env.RELEASE_VERSION }}
+          --tag benchao/qbittorrent-rclone:v1.7
